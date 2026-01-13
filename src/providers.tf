@@ -1,11 +1,19 @@
 provider "aws" {
   region = var.region
 
-  # Make it faster by skipping something
-  skip_metadata_api_check     = true
-  skip_region_validation      = true
-  skip_credentials_validation = true
+  # Profile is deprecated in favor of terraform_role_arn. When profiles are not in use, terraform_profile_name is null.
+  profile = module.iam_roles.terraform_profile_name
 
-  # skip_requesting_account_id should be disabled to generate valid ARN in cross-account authorization
-  skip_requesting_account_id = false
+  dynamic "assume_role" {
+    # module.iam_roles.terraform_role_arn may be null, in which case do not assume a role.
+    for_each = compact([module.iam_roles.terraform_role_arn])
+    content {
+      role_arn = assume_role.value
+    }
+  }
+}
+
+module "iam_roles" {
+  source  = "../account-map/modules/iam-roles"
+  context = module.this.context
 }
