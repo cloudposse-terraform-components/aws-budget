@@ -12,11 +12,63 @@ The component supports:
 
 **Stack Level**: Global (deployed in each account where budget monitoring is needed)
 
+### Catalog Configuration
+
+First, add the abstract component to your catalog:
+
 ```yaml
 components:
   terraform:
-    aws-budgets:
+    # Abstract defaults - inherit from this in each account's stack
+    aws-budget/defaults:
+      metadata:
+        component: aws-budget
+        type: abstract
       vars:
+        enabled: true
+        name: aws-budget
+        # Slack notifications are disabled by default
+        notifications_enabled: false
+        slack_webhook_url: ""
+        slack_channel: ""
+        slack_username: ""
+        # Default budget configuration - $5000 monthly limit with CloudWatch alarm
+        budgets:
+          - name: "default"
+            budget_type: "COST"
+            limit_amount: "5000"
+            limit_unit: "USD"
+            time_unit: "MONTHLY"
+            time_period_start: "2024-01-01_00:00"
+            # CloudWatch alarm at 80% of budget threshold
+            notifications:
+              - comparison_operator: "GREATER_THAN"
+                threshold: 80
+                threshold_type: "PERCENTAGE"
+                notification_type: "ACTUAL"
+                # Uses default SNS topic created by the module
+            # cost_filters:
+            #   Service:
+            #     - Amazon Elastic Compute Cloud - Compute
+            #     - Amazon Simple Storage Service
+            #     - Amazon Relational Database Service
+            #     - AWS Lambda
+            #     - Amazon CloudFront
+```
+
+### Stack Configuration
+
+Then inherit from the defaults in your stack:
+
+```yaml
+components:
+  terraform:
+    aws-budget:
+      metadata:
+        inherits:
+          - aws-budget/defaults
+      vars:
+        # Override defaults as needed
         budgets:
           - name: "monthly-cost-budget"
             budget_type: "COST"
