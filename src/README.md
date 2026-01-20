@@ -39,7 +39,7 @@ components:
             limit_amount: "5000"
             limit_unit: "USD"
             time_unit: "MONTHLY"
-            time_period_start: "2024-01-01_00:00"
+            time_period_start: "YYYY-MM-DD_HH:MM"  # Set to your desired start date
             # CloudWatch alarm at 80% of budget threshold
             notifications:
               - comparison_operator: "GREATER_THAN"
@@ -80,11 +80,11 @@ components:
                 - "Amazon Elastic Compute Cloud - Compute"
                 - "Amazon Relational Database Service"
             notifications:
-              - comparison: "GREATER_THAN"
+              - comparison_operator: "GREATER_THAN"
                 threshold: 80
                 threshold_type: "PERCENTAGE"
                 notification_type: "ACTUAL"
-              - comparison: "GREATER_THAN"
+              - comparison_operator: "GREATER_THAN"
                 threshold: 100
                 threshold_type: "PERCENTAGE" 
                 notification_type: "FORECASTED"
@@ -117,7 +117,7 @@ Each budget in the `budgets` list supports the following parameters (see [AWS Bu
 | `limit_amount` | Budget limit amount | Yes |
 | `limit_unit` | Budget limit unit (e.g., `USD`, `GB`) | Yes |
 | `time_unit` | `DAILY`, `MONTHLY`, `QUARTERLY`, `ANNUALLY` | Yes |
-| `time_period_start` | Budget start time (optional) | No |
+| `time_period_start` | Budget start time in format "YYYY-MM-DD_HH:MM" (optional) | No |
 | `time_period_end` | Budget end time (optional) | No |
 | `cost_filters` | Cost filters (Service, AZ, etc.) | No |
 | `notifications` | List of notification thresholds | No |
@@ -136,11 +136,11 @@ budgets:
       Service:
         - "Amazon Elastic Compute Cloud - Compute"
     notifications:
-      - comparison: "GREATER_THAN"
+      - comparison_operator: "GREATER_THAN"
         threshold: 80
         threshold_type: "PERCENTAGE"
         notification_type: "ACTUAL"
-      - comparison: "GREATER_THAN"
+      - comparison_operator: "GREATER_THAN"
         threshold: 100
         threshold_type: "PERCENTAGE"
         notification_type: "FORECASTED"
@@ -158,7 +158,7 @@ budgets:
       Service:
         - "Amazon CloudFront"
     notifications:
-      - comparison: "GREATER_THAN"
+      - comparison_operator: "GREATER_THAN"
         threshold: 90
         threshold_type: "PERCENTAGE"
         notification_type: "ACTUAL"
