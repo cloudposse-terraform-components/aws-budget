@@ -4,7 +4,7 @@ locals {
 
 module "budgets" {
   source  = "cloudposse/budgets/aws"
-  version = "0.8.0"
+  version = "0.8.1"
   enabled = local.enabled
 
   budgets = var.budgets
